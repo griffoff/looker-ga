@@ -5,6 +5,6 @@
 
 - explore: ga_sessions
   always_filter:
-    date_filter: last 1 day
+    date_filter: last 3 days
     
 
