@@ -1,6 +1,23 @@
 - view: ga_sessions
   sql_table_name: |
-      (SELECT * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_ %})
+      (
+      SELECT * FROM 
+      #MINDTAP
+      (SELECT 'MindTap' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_ %})
+      ,(SELECT 'MindTap' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_intraday_ %})
+      #CNOW V7
+      ,(SELECT 'CNow V7' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_ %})
+      ,(SELECT 'CNow V7' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_intraday_ %})
+      #CNOW V8
+      ,(SELECT 'CNow V8' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_ %})
+      ,(SELECT 'CNow V8' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_intraday_ %})
+      #CNOW MindApp
+      ,(SELECT 'CNow MindApp' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %})
+      ,(SELECT 'CNow MindApp' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
+      #Mindtap Mobile
+      ,(SELECT 'Mindtap Mobile' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %})
+      ,(SELECT 'Mindtap Mobile' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_intraday_ %})
+      )
       
   fields:
   
@@ -19,13 +36,64 @@
     view_label: "Users"
     type: string
     sql: ${TABLE}.fullVisitorId
+
+  - dimension: user_role
+    label: 'User Role'
+    view_label: 'Users'
+    type: string
+    sql: JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.userRole")
   
-      
+  - dimension: user_sso_guid
+    label: 'User Guid'
+    view_label: 'Users'
+    type: string
+    sql: JSON_EXTRACT(hits.customDimensions.value, "$.userSSOGuid")
+  
   - measure: users
     label: "Distinct Users"
     view_label: "Users"
     type: count_distinct
     sql: ${full_visitor_id}  
+  
+#####################
+## Event Dimensions
+#####################  
+
+  - dimension: event_category
+    label: "Event Category"  
+    view_label: "Events"
+    type: string
+    sql: ${TABLE}.hits.eventInfo.eventCategory
+    
+  - dimension: event_category_1
+    label: "Event Category 1"  
+    view_label: "Events"
+    type: string
+    sql: COALESCE(CASE WHEN INSTR(${TABLE}.hits.eventInfo.eventCategory, ' - ') > 0 THEN LEFT(${TABLE}.hits.eventInfo.eventCategory, INSTR(${TABLE}.hits.eventInfo.eventCategory, ' - ')) END, ${TABLE}.hits.eventInfo.eventCategory)
+  
+  - dimension: event_category_2
+    label: "Event Category 2"  
+    view_label: "Events"
+    type: string
+    sql: SUBSTR(${TABLE}.hits.eventInfo.eventCategory, INSTR(${TABLE}.hits.eventInfo.eventCategory, ' - '))
+    
+  - dimension: event_action
+    label: "Event Action"  
+    view_label: "Events"
+    type: string
+    sql: ${TABLE}.hits.eventInfo.eventAction
+  
+  - dimension: event_label
+    label: "Event Label"  
+    view_label: "Events"
+    type: string
+    sql: ${TABLE}.hits.eventInfo.eventLabel
+    
+  - dimension: event_value
+    label: "Event Value"  
+    view_label: "Events"
+    type: string
+    sql: ${TABLE}.hits.eventInfo.eventValue
 
 #####################
 ## Device Dimensions
@@ -56,8 +124,49 @@
     type: string
     sql: ${TABLE}.device.operatingSystem
 
+########################
+## Geographic Dimensions
+########################
+  
+  - dimension: continent
+    view_label: 'Location'
+    type: string
+    sql: geoNetwork.continent
+  
+  - dimension: country
+    view_label: 'Location'
+    type: string
+    sql: geoNetwork.country
+  
+  - dimension: region
+    view_label: 'Location'
+    type: string
+    sql: geoNetwork.region
+    
+#####################
+## Date/Time
+#####################
 
-
+  - dimension: visit_start
+    label: "Visit Start"
+    view_label: "Date/Time"
+    type: time
+    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
+    sql: FORMAT_UTC_USEC(${TABLE}.visitStartTime* 1000000)
+    
+  - dimension: hit_time
+    label: "Hit"
+    view_label: "Date/Time"
+    type: time
+    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
+    sql: FORMAT_UTC_USEC((${TABLE}.visitStartTime* 1000000) + ${TABLE}.hits.time*1000)
+    
+  - dimension: hit_hour
+    label: "Hit Hour"
+    view_label: "Date/Time"
+    type: number
+    sql: ${TABLE}.hits.hour
+    
 #####################
 ## Session Dimensions
 #####################
@@ -72,18 +181,17 @@
     sql: |
       CONCAT(${full_visitor_id},' - ',string(${visit_id}))
 
-  - dimension: visit_time_on_site
+  - measure: visit_time_on_site_total
+    label: 'Time on Site - Total'
     view_label: "Visits"
-    type: number
+    type: sum
     sql: ${TABLE}.totals.timeOnSite
 
-  - dimension: visit_start
-    label: "Start"
+  - measure: visit_time_on_site_avg
+    label: 'Time on Site - Average'
     view_label: "Visits"
-    type: time
-    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
-    sql: FORMAT_UTC_USEC(${TABLE}.visitStartTime* 1000000)
-
+    type: average
+    sql: ${TABLE}.totals.timeOnSite
 
   - dimension: is_visit
     view_label: "Visits"
@@ -99,6 +207,26 @@
     view_label: "Visits"
     type: number
     sql: ${TABLE}.totals.hits
+
+#####################
+## Cengage Platform
+#####################
+
+  - dimension: product_platform
+    view_label: 'Product Platform'
+    label: 'Platform name'
+    sql: ${TABLE}.ProductPlatform
+    #sql: JSON_EXTRACT(hits.customDimensions.value, "$.productPlatform")
+    
+  - dimension: product_platform_environment
+    view_label: 'Product Platform'
+    label: 'Platform environment'
+    sql: JSON_EXTRACT(hits.customDimensions.value, "$.environment")
+    
+  - dimension: hostname
+    view_label: 'Product Platform'
+    label: 'Domain Name'
+    sql: ${TABLE}.hits.page.hostname
     
 #####################
 ## Session Measures
@@ -248,3 +376,6 @@
         END
         )
     fanout_on: hits 
+    
+    
+    
