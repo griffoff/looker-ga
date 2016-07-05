@@ -3,21 +3,26 @@
       (
       SELECT * FROM 
       #MINDTAP
-      (SELECT 'MindTap' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_ %})
-      ,(SELECT 'MindTap' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_intraday_ %})
+      (SELECT 'MindTap' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_ %})
+      ,(SELECT 'MindTap' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_intraday_ %})
       #CNOW V7
-      ,(SELECT 'CNow V7' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_ %})
-      ,(SELECT 'CNow V7' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_intraday_ %})
+      ,(SELECT 'CNow V7' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_ %})
+      ,(SELECT 'CNow V7' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_intraday_ %})
       #CNOW V8
-      ,(SELECT 'CNow V8' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_ %})
-      ,(SELECT 'CNow V8' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_intraday_ %})
+      ,(SELECT 'CNow V8' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_ %})
+      ,(SELECT 'CNow V8' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_intraday_ %})
       #CNOW MindApp
-      ,(SELECT 'CNow MindApp' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %})
-      ,(SELECT 'CNow MindApp' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
+      ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %})
+      ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
       #Mindtap Mobile
-      ,(SELECT 'Mindtap Mobile' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %})
-      ,(SELECT 'Mindtap Mobile' as ProductPlatform, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_intraday_ %})
+      ,(SELECT 'Mindtap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %})
+      ,(SELECT 'Mindtap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_intraday_ %})
+      #Mindtap GTM
+      ,(SELECT 'Mindtap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %})
+      ,(SELECT 'Mindtap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
       )
+      )
+      
       
   fields:
   
