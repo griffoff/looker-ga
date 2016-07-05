@@ -21,7 +21,7 @@
       ,(SELECT 'Mindtap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %})
       ,(SELECT 'Mindtap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
       )
-      )
+      
       
       
   fields:
