@@ -15,11 +15,14 @@
       ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %})
       ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
       #Mindtap Mobile
-      ,(SELECT 'Mindtap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %})
-      ,(SELECT 'Mindtap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_intraday_ %})
+      ,(SELECT 'MindTap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %})
+      ,(SELECT 'MindTap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_intraday_ %})
       #Mindtap GTM
-      ,(SELECT 'Mindtap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %})
-      ,(SELECT 'Mindtap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
+      ,(SELECT 'MindTap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %})
+      ,(SELECT 'MindTap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
+      #Mindtap QAD - GTM/GA Combined
+      ,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM {% table_date_range date_filter nth-station-121323:42084510.ga_sessions_ %})
+      ,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM {% table_date_range date_filter nth-station-121323:42084510.ga_sessions_intraday_ %})
       )
       
       
@@ -46,7 +49,7 @@
     label: 'User Role'
     view_label: 'Users'
     type: string
-    sql: JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.userRole")
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.userRole")), '"', ''), '')
   
   - dimension: user_sso_guid
     label: 'User Guid'
@@ -157,14 +160,14 @@
     view_label: "Date/Time"
     type: time
     timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
-    sql: FORMAT_UTC_USEC(${TABLE}.visitStartTime* 1000000)
+    sql: CAST(FORMAT_UTC_USEC(${TABLE}.visitStartTime* 1000000) as TIMESTAMP)
     
   - dimension: hit_time
     label: "Hit"
     view_label: "Date/Time"
     type: time
     timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
-    sql: FORMAT_UTC_USEC((${TABLE}.visitStartTime* 1000000) + ${TABLE}.hits.time*1000)
+    sql: CAST(FORMAT_UTC_USEC((${TABLE}.visitStartTime* 1000000) + ${TABLE}.hits.time*1000) as TIMESTAMP)
     
   - dimension: hit_hour
     label: "Hit Hour"
@@ -343,6 +346,7 @@
     sql: ${hit_key}
 
   - measure: pageviews
+    type: number
     view_label: "Hits"
     sql: |
       COUNT(
