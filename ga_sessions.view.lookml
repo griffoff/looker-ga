@@ -3,26 +3,29 @@
       (
       SELECT * FROM 
       #MINDTAP
-      (SELECT 'MindTap' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_ %})
-      ,(SELECT 'MindTap' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_intraday_ %})
+      (SELECT 'MindTap' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_intraday_ %})
       #CNOW V7
-      ,(SELECT 'CNow V7' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_ %})
-      ,(SELECT 'CNow V7' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_intraday_ %})
+      ,(SELECT 'CNow V7' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_intraday_ %})
       #CNOW V8
-      ,(SELECT 'CNow V8' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_ %})
-      ,(SELECT 'CNow V8' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_intraday_ %})
+      ,(SELECT 'CNow V8' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_intraday_ %})
       #CNOW MindApp
-      ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %})
-      ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
+      ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
       #Mindtap Mobile
-      ,(SELECT 'MindTap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %})
-      ,(SELECT 'MindTap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_intraday_ %})
+      ,(SELECT 'MindTap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_intraday_ %})
       #Mindtap GTM
-      ,(SELECT 'MindTap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %})
-      ,(SELECT 'MindTap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
+      ,(SELECT 'MindTap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM {% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
       #Mindtap QAD - GTM/GA Combined
-      ,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM {% table_date_range date_filter nth-station-121323:42084510.ga_sessions_ %})
-      ,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM {% table_date_range date_filter nth-station-121323:42084510.ga_sessions_intraday_ %})
+      ,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM {% table_date_range date_filter nth-station-121323:42084510.ga_sessions_ %}
+        ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_intraday_ %})
+      #MT4 - Non Prod
+      ,(SELECT 'MT4' as ProductPlatform, 'QA' as Environment, * FROM {% table_date_range date_filter nth-station-121323:125113011.ga_sessions_ %}
+        ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_intraday_ %})
       )
       
       
@@ -33,7 +36,57 @@
     label: "Table Date Range"
     view_label: " Table Date Range"
     type: date
-
+    
+    
+#####################
+## DataLayer Dimensions
+#####################
+  - dimension: datalayer_userRole
+    label: 'User Role'
+    view_label: 'Data Layer'
+    type: string
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.userRole")), '"', ''), '')
+  
+  - dimension: datalayer_userSSOGuid
+    label: 'User Guid'
+    view_label: 'Data Layer'
+    type: string
+    sql: nvl(REPLACE(JSON_EXTRACT(hits.customDimensions.value, "$.userSSOGuid"), '"', ''), 'UNKNOWN')
+    links:
+    - label: Analytics Diagnostic Tool
+      url: https://analytics-tools.cengage.info/diagnostictool/#/user/view/production/userIdentifier/{{ value }}
+  
+  - dimension: datalayer_productPlatform
+    label: 'Product Platform'
+    view_label: 'Data Layer'
+    type: string
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.productPlatform")), '"', ''), 'UNKNOWN')
+  
+  - dimension: datalayer_environment
+    label: 'Platform Environment'
+    view_label: 'Data Layer'
+    type: string
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.environment")), '"', ''), 'UNKNOWN')
+    
+  - dimension: datalayer_localTime
+    label: 'Local Time'
+    view_label: 'Data Layer'
+    type: date
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.localTime")), '"', ''), 'UNKNOWN')
+  
+  - dimension: datalayer_localTime
+    label: 'Local Time'
+    view_label: 'Data Layer'
+    type: time
+    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.localTime")), '"', ''), 'UNKNOWN')
+  
+  - dimension: datalayer_courseKey
+    label: 'Course Key'
+    view_label: 'Data Layer'
+    type: string
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.courseKey")), '"', ''), 'UNKNOWN')
+  
 
 #####################
 ## User Dimensions
@@ -55,7 +108,10 @@
     label: 'User Guid'
     view_label: 'Users'
     type: string
-    sql: JSON_EXTRACT(hits.customDimensions.value, "$.userSSOGuid")
+    sql: nvl(REPLACE(JSON_EXTRACT(hits.customDimensions.value, "$.userSSOGuid"), '"', ''), 'UNKNOWN')
+    links:
+    - label: Analytics Diagnostic Tool
+      url: https://analytics-tools.cengage.info/diagnostictool/#/user/view/production/userIdentifier/{{ value }}
   
   - measure: users
     label: "Distinct Users"
@@ -144,12 +200,20 @@
   - dimension: country
     view_label: 'Location'
     type: string
+    map_layer: countries
     sql: geoNetwork.country
   
   - dimension: region
     view_label: 'Location'
+    map_layer: us_states
     type: string
     sql: geoNetwork.region
+    
+  - dimension: location
+    view_label: 'Location'
+    type: location
+    sql_latitude: geoNetwork.latitude
+    sql_longitude: geoNetwork.longitude
     
 #####################
 ## Date/Time
