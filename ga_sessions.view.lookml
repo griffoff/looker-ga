@@ -27,13 +27,13 @@
         ,{% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %}
         ,{% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
       #Mindtap QAD - GTM/GA Combined
-      ,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM (select null limit 0)
-        ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_ %}
-        ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_intraday_ %})
+      #,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM (select null limit 0)
+      #  ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_ %}
+      #  ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_intraday_ %})
       #MT4 - Non Prod
-      ,(SELECT 'MT4' as ProductPlatform, 'QA' as Environment, * FROM (select null limit 0)
-        ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_ %}
-        ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_intraday_ %})
+      #,(SELECT 'MT4' as ProductPlatform, 'QA' as Environment, * FROM (select null limit 0)
+      #  ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_ %}
+      #  ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_intraday_ %})
       )
       
       
