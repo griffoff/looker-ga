@@ -75,18 +75,12 @@
     view_label: 'Data Layer'
     type: string
     sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.environment")), '"', ''), 'UNKNOWN')
-    
-  - dimension: datalayer_localTime
-    label: 'Local Time'
-    view_label: 'Data Layer'
-    type: date
-    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.localTime")), '"', ''), 'UNKNOWN')
-  
+
   - dimension: datalayer_localTime
     label: 'Local Time'
     view_label: 'Data Layer'
     type: time
-    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
+    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw, minute, minute15, time]
     sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.localTime")), '"', ''), 'UNKNOWN')
   
   - dimension: datalayer_courseKey
@@ -95,6 +89,12 @@
     type: string
     sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.courseKey")), '"', ''), 'UNKNOWN')
   
+  - dimension: datalayer_activityCGI
+    label: 'Activity CGI'
+    view_label: 'Data Layer'
+    type: string
+    sql: nvl(replace(Upper(JSON_EXTRACT(${TABLE}.hits.customDimensions.value, "$.activityCGI")), '"', ''), 'UNKNOWN')
+    
 
 #####################
 ## User Dimensions
@@ -238,7 +238,7 @@
     label: "Hit"
     view_label: "Date/Time"
     type: time
-    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw]
+    timeframes: [hour, date, week, month, year, day_of_week, hour_of_day, month_number, raw, minute, minute15, time]
     sql: CAST(FORMAT_UTC_USEC((${TABLE}.visitStartTime* 1000000) + ${TABLE}.hits.time*1000) as TIMESTAMP)
     
   - dimension: hit_hour
@@ -265,7 +265,8 @@
     label: 'Time on Site - Total'
     view_label: "Visits"
     type: sum
-    sql: ${TABLE}.totals.timeOnSite
+    sql: ${TABLE}.totals.timeOnSite/60.0
+    value_format: '0.0 \m\i\n\s'
 
   - measure: visit_time_on_site_avg
     label: 'Time on Site - Average'
@@ -301,7 +302,7 @@
   - dimension: product_platform_environment
     view_label: 'Product Platform'
     label: 'Platform environment'
-    sql: JSON_EXTRACT(hits.customDimensions.value, "$.environment")
+    sql: REPLACE(JSON_EXTRACT(hits.customDimensions.value, "$.environment"), '"', '')
     
   - dimension: hostname
     view_label: 'Product Platform'
