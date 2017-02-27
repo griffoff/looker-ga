@@ -1,23 +1,11 @@
 - view: ga_sessions
   sql_table_name: |
-      (
+    (
       SELECT * FROM 
       #MINDTAP
       (SELECT 'MindTap' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
         ,{% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_ %}
         ,{% table_date_range date_filter titanium-kiln-120918:115907067.ga_sessions_intraday_ %})
-      #CNOW V7
-      ,(SELECT 'CNow V7' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
-        ,{% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_ %}
-        ,{% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_intraday_ %})
-      #CNOW V8
-      ,(SELECT 'CNow V8' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
-        ,{% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_ %}
-        ,{% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_intraday_ %})
-      #CNOW MindApp
-      ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
-        ,{% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %}
-        ,{% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
       #Mindtap Mobile
       ,(SELECT 'MindTap Mobile' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
         ,{% table_date_range date_filter titanium-kiln-120918:92812344.ga_sessions_ %}
@@ -26,15 +14,36 @@
       ,(SELECT 'MindTap GTM Version' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
         ,{% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_ %}
         ,{% table_date_range date_filter titanium-kiln-120918:116451265.ga_sessions_intraday_ %})
-      #Mindtap QAD - GTM/GA Combined
-      #,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM (select null limit 0)
-      #  ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_ %}
-      #  ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_intraday_ %})
-      #MT4 - Non Prod
-      #,(SELECT 'MT4' as ProductPlatform, 'QA' as Environment, * FROM (select null limit 0)
-      #  ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_ %}
-      #  ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_intraday_ %})
-      )
+      #SAM
+      ,(SELECT 'SAM' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
+        ,{% table_date_range date_filter titanium-kiln-120918:116188121.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:116188121.ga_sessions_intraday_ %})
+      #APLIA
+      ,(SELECT 'Aplia' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
+        ,{% table_date_range date_filter titanium-kiln-120918:130709608.ga_sessions_ %}
+        ,{% table_date_range date_filter titanium-kiln-120918:130709608.ga_sessions_intraday_ %})
+    )
+  
+#      #CNOW V7
+#      ,(SELECT 'CNow V7' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
+#        ,{% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_ %}
+#        ,{% table_date_range date_filter titanium-kiln-120918:116197107.ga_sessions_intraday_ %})
+#      #CNOW V8
+#      ,(SELECT 'CNow V8' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
+#        ,{% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_ %}
+#        ,{% table_date_range date_filter titanium-kiln-120918:121361627.ga_sessions_intraday_ %})
+#      #CNOW MindApp
+#      ,(SELECT 'CNow MindApp' as ProductPlatform, 'PROD' as Environment, * FROM (select null limit 0)
+#        ,{% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_ %}
+#        ,{% table_date_range date_filter titanium-kiln-120918:121398401.ga_sessions_intraday_ %})
+#      #Mindtap QAD - GTM/GA Combined
+#      ,(SELECT 'MindTap GTM+GA' as ProductPlatform, 'QAD' as Environment, * FROM (select null limit 0)
+#        ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_ %}
+#        ,{% table_date_range date_filter nth-station-121323:42084510.ga_sessions_intraday_ %})
+#      #MT4 - Non Prod
+#      ,(SELECT 'MT4' as ProductPlatform, 'QA' as Environment, * FROM (select null limit 0)
+#        ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_ %}
+#        ,{% table_date_range date_filter nth-station-121323:125113011.ga_sessions_intraday_ %})
       
       
       
@@ -265,9 +274,9 @@
     label: 'Time on Site - Total'
     view_label: "Visits"
     type: sum
-    sql: ${TABLE}.totals.timeOnSite/60.0
-    value_format: '0.0 \m\i\n\s'
-
+    sql: ${TABLE}.totals.timeOnSite/86400.0
+    value_format: 'h:mm:ss'
+    
   - measure: visit_time_on_site_avg
     label: 'Time on Site - Average'
     view_label: "Visits"
